@@ -54,6 +54,46 @@ def test_daily_min(test, expected):
     from inflammation.models import daily_min
     npt.assert_array_equal(np.array(expected), daily_min(np.array(test)))
 
+# @pytest.mark.parametrize(
+#     "test, expected",
+#     [
+#         ([[1, 2, 3], [4, 5, 6], [7, 8, 9]], [[0.33, 0.66, 1], [0.66, 0.83, 1], [0.77, 0.88, 1]])
+#     ])
+@pytest.mark.parametrize(
+    "test, expected, expected_error",
+    [
+        (
+            'hello',
+            None,
+            TypeError,
+        ),
+        (
+            3,
+            None,
+            TypeError,
+        ),
+        # (
+        #     [[-1, 2, 3], [4, 5, 6], [7, 8, 9]],
+        #     [[0, 0.66, 1], [0.66, 0.83, 1], [0.77, 0.88, 1]],
+        #     ValueError,
+        # ),
+        (
+            [[1, 2, 3], [4, 5, 6], [7, 8, 9]],
+            [[0.33, 0.66, 1], [0.66, 0.83, 1], [0.77, 0.88, 1]],
+            None,
+        ),
+    ])
+def test_patient_normalise(test, expected, expected_error):
+    """Test normalisation works for arrays of one and positive integers."""
+    from inflammation.models import patient_normalise
+    if isinstance(test, list):
+        test = np.array(test)
+    if expected_error:
+        with pytest.raises(expected_error):
+            npt.assert_almost_equal(np.array(expected), patient_normalise(np.array(test)), decimal=2)
+    else:
+        npt.assert_almost_equal(np.array(expected), patient_normalise(np.array(test)), decimal=2)
+
 
 @patch('inflammation.models.get_data_dir', return_value='/data_dir')
 def test_load_csv(mock_get_data_dir):
